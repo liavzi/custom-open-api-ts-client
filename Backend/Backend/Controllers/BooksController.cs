@@ -15,7 +15,7 @@
         };
 
         [HttpGet]
-        public IEnumerable<Book> GetBooks()
+        public IEnumerable<Book> GetAllBooks()
         {
             return Books;
         }
@@ -25,6 +25,18 @@
         {
             Books.Add(book);
             return book;
+        }
+
+        [HttpGet("title/{title}")]
+        public Book? GetBookByTitle(string title)
+        {
+            return Books.FirstOrDefault(b => b.Title.Equals(title, StringComparison.OrdinalIgnoreCase));
+        }
+
+        [HttpGet("author/{author}")]
+        public IEnumerable<Book> GetBooksByAuthor(string author)
+        {
+            return Books.Where(b => b.Author.Equals(author, StringComparison.OrdinalIgnoreCase));
         }
     }
 

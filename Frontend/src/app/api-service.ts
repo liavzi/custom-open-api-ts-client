@@ -1,4 +1,4 @@
-import {Observable, of} from 'rxjs';
+import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 
@@ -6,28 +6,32 @@ import {HttpClient} from '@angular/common/http';
   providedIn: 'root'
 })
 export class ApiService {
-  constructor(private http: HttpClient,
-  ) {
+  private baseUrl = '';
+
+  constructor(private http: HttpClient) {
   }
 
-  get(endpoint: string, params?: RequestParam): Promise<any> {
-    return Promise.resolve();
+  get(endpoint: string, params?: RequestParam): Observable<any> {
+    return this.http.get(this.buildFullUrl(endpoint));
   }
 
-  post(endpoint: string, body: any, params?: RequestParam): Promise<any> {
-    return Promise.resolve();
+  post(endpoint: string, body: any, params?: RequestParam): Observable<any> {
+    return this.http.post(this.buildFullUrl(endpoint), body);
   }
 
-  put(endpoint: string, body: any, params?: RequestParam): Promise<any> {
-    return Promise.resolve();
+  put(endpoint: string, body: any, params?: RequestParam): Observable<any> {
+    return this.http.put(this.buildFullUrl(endpoint), body);
   }
 
-  delete(endpoint: string, params?: RequestParam): Promise<any> {
-    return Promise.resolve();
+  delete(endpoint: string, params?: RequestParam): Observable<any> {
+    return this.http.delete(this.buildFullUrl(endpoint));
   }
 
+  private buildFullUrl(endpoint: string): string {
+    return `${this.baseUrl}/${endpoint}`;
+  }
 
-  handleInternalApiCall(args: InternalApiCallArgs){
+  handleInternalApiCall(args: InternalApiCallArgs) {
     const url = this.buildInternalApiUrl(args);
     return this.makeApiCall(url, args);
   }
@@ -49,7 +53,7 @@ export class ApiService {
   }
 
   private buildInternalApiUrl(args: InternalApiCallArgs) {
-    let url =  this.interpolatePathParams(args.url, args.pathParams);
+    let url = this.interpolatePathParams(args.url, args.pathParams);
     url = this.addQueryParams(url, args.queryParams);
     // remove leading slash
     return url.slice(1);
@@ -77,16 +81,17 @@ export class ApiService {
   }
 
   private getUrlParamValue(urlParamValue: any) {
-    if (urlParamValue instanceof Date)
+    if (urlParamValue instanceof Date) {
       return urlParamValue.toDateString();
+    }
     return urlParamValue;
   }
 }
 
 export interface InternalApiCallArgs {
   url: string;
-  pathParams: object;
-  queryParams: object;
+  pathParams: Record<string, any>;
+  queryParams: Record<string, any>;
   requestBody?: any;
   httpVerb: 'get' | 'post' | 'put' | 'delete';
   apiServiceRequestParams?: RequestParam;

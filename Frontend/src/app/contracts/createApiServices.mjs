@@ -33,6 +33,7 @@ for (const [serviceName, service] of servicesByName) {
   file.addImportDeclarations([
     { namedImports: ['Injectable'], moduleSpecifier: '@angular/core' },
     { namedImports: ['ApiService', 'RequestParam'], moduleSpecifier: '../../../api-service' },
+    { namedImports: ['Observable'], moduleSpecifier: 'rxjs' },
   ]);
 
   const serviceClassDefinition = file.addClass({
@@ -88,7 +89,7 @@ function getReturnType(methodOpenApiSpec, file) {
     !methodOpenApiSpec.responses['200'].content["application/json"].schema
   )
     return undefined;
-  return `Promise<${getTypescriptTypeFromOpenApiType(file, methodOpenApiSpec.responses['200'].content["application/json"].schema)}>`;
+  return `Observable<${getTypescriptTypeFromOpenApiType(file, methodOpenApiSpec.responses['200'].content["application/json"].schema)}>`;
 }
 
 // pascal case to camel case
