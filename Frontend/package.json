@@ -7,7 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "generate-contracts": "openapi-ts"
+    "generate-contracts": "openapi-ts && npm run generate-api-services",
+    "generate-api-services": "node src/app/contracts/createApiServices.mjs"
   },
   "prettier": {
     "printWidth": 100,
@@ -30,6 +31,7 @@
     "@angular/platform-browser": "^20.3.0",
     "@angular/router": "^20.3.0",
     "rxjs": "~7.8.0",
+    "ts-morph": "^27.0.2",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
   },
