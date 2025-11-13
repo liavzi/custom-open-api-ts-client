@@ -130,7 +130,7 @@ function getInterfaceName($ref) {
   return normalizePascalCase(interfaceName);
 }
 
-// convert names like EmployeeNIPaymentModel to EmployeeNiPaymentModel (fix consecutive uppercase)
+// fix consecutive uppercase
 function normalizePascalCase(str) {
   return str.replace(/([A-Z])([A-Z]+)([A-Z][a-z])/g, (match, p1, p2, p3) => { return p1 + p2[0].toLowerCase() + p3; });
 }
