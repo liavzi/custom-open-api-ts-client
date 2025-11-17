@@ -7,9 +7,12 @@ const project = new Project({
   manipulationSettings: { quoteKind: QuoteKind.Single },
 });
 
+// base dir for the generated api services
 const baseDir = path.resolve(`${import.meta.dirname}/generated-client/api-services`);
 console.log(baseDir);
-//move through the internalApiDefinition to create services
+
+
+// iterate over all api operations and create a service object with method definitions descriptions
 const servicesByName = new Map();
 for (const [pathKey, pathValue] of Object.entries(internalApiDefinition.paths)) {
   for (const [methodKey, methodValue] of Object.entries(pathValue)) {
@@ -19,13 +22,16 @@ for (const [pathKey, pathValue] of Object.entries(internalApiDefinition.paths)) 
       service = {name: serviceName, methods: []};
       servicesByName.set(serviceName, service);
     }
+    // the url of the method i.e. /api/books
     methodValue.url = pathKey;
+    // GET or POST...
     methodValue.httpVerb = methodKey;
     service.methods.push(methodValue);
   }
 }
 
 
+// iterate over all the service objects and create a matching file i.e. books-api.service.ts
 for (const [serviceName, service] of servicesByName) {
   const filePath = path.join(baseDir, `${pascalCaseToKebabCase(serviceName).replace("-service", "")}.service.ts`);
   const file = project.createSourceFile(filePath, '', { overwrite: true });
@@ -46,7 +52,7 @@ for (const [serviceName, service] of servicesByName) {
     parameters: [{ name: 'apiService', type: 'ApiService', scope: Scope.Private, isReadonly: true }],
   });
 
-  // Methods
+  // add methods to the service
   for (const methodOpenApiSpec of service.methods) {
     const pathParams = (methodOpenApiSpec.parameters || []).filter(x => x.in === 'path');
     const queryParams = (methodOpenApiSpec.parameters || []).filter(x => x.in === 'query');
